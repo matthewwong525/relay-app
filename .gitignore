@@ -1,0 +1,18 @@
+# Flutter and Dart build output
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+*.iml
+.idea/
+
+# Never published: keys and signing files
+.env*
+!.env.example
+*.jks
+*.keystore
+key.properties
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
