@@ -16,3 +16,18 @@ build/
 key.properties
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
+*.p8
+*.p12
+*.cer
+*.certSigningRequest
+*.mobileprovision
+*.provisionprofile
+
+# fastlane's run output
+ios/fastlane/report.xml
+ios/fastlane/Preview.html
+ios/fastlane/screenshots/
+ios/fastlane/test_output/
+ios/fastlane/README.md
+*.ipa
+*.dSYM.zip

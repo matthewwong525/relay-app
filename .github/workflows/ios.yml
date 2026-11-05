@@ -1,0 +1,48 @@
+# The iPhone app: built on a Mac and sent to TestFlight. It waits, with a notice, until the App Store Connect key
+# is in this repository's secrets.
+name: iOS
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  testflight:
+    runs-on: macos-latest
+    env:
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      BUILD_NUMBER: ${{ github.run_number }}
+    steps:
+      - name: App Store Connect key
+        id: key
+        run: |
+          if [ -z "$ASC_KEY_ID" ] || [ -z "$ASC_ISSUER_ID" ] || [ -z "$ASC_KEY_P8" ] || [ -z "$APPLE_TEAM_ID" ]; then
+            echo "::notice::No App Store Connect key in this repository's secrets yet, so no iPhone build. See README.md."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.key.outputs.ready == 'true'
+      - uses: subosito/flutter-action@v2
+        if: steps.key.outputs.ready == 'true'
+        with:
+          flutter-version-file: pubspec.yaml
+          cache: true
+      - uses: ruby/setup-ruby@v1
+        if: steps.key.outputs.ready == 'true'
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+          working-directory: ios
+      - name: Build
+        if: steps.key.outputs.ready == 'true'
+        run: |
+          flutter pub get
+          flutter build ios --release --no-codesign --build-number="$BUILD_NUMBER"
+      - name: TestFlight
+        if: steps.key.outputs.ready == 'true'
+        working-directory: ios
+        run: bundle exec fastlane beta
