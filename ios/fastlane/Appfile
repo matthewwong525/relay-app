@@ -1,0 +1,2 @@
+# The app's id in App Store Connect. The team and the key come from the build machine's secrets, never this file.
+app_identifier("com.matthewwong525.relayApp")
